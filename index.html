@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>reveal.js - The HTML Presentation Framework</title>
+
+		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+		<meta name="author" content="Hakim El Hattab">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="css/reveal.min.css">
+		<link rel="stylesheet" href="css/theme/default.css" id="theme">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', use the PDF print sheet -->
+		<script>
+			document.write( '<link rel="stylesheet" href="css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+
+				<section>
+					<h1>SPDY && HTTP 2.0</h1>
+					<p>The new web protocols</p>
+				</section>
+
+				<section>
+					<h2>Why do we need them?</h2>
+				</section>
+
+				<section>
+					<h2>HTTP versions</h2>
+					<ul>
+						<li class="fragment">HTTP/0.9 (1991)</li>
+						<li class="fragment">HTTP/1.0 (1996)</li>
+						<li class="fragment roll-in">HTTP/1.1 (1997, 1999)</li>
+					</ul>
+				</section>
+
+				<section>
+					<blockquote>
+						The Internet was done so well that most people think of it as a natural resource like the Pacific Ocean, rather than something that was man-made. When was the last time a technology with a scale like that was so error-free? The Web, in comparison, is a joke. The Web was done by amateurs.
+					</blockquote>
+					<p>- Alan Kay</p>
+				</section>
+
+				<section>
+					<h2>HTTP/1.0</h2>
+					<p>Persistent connections not default</p>
+				</section>
+
+				<section>
+					<h2>Persistent connection</h2>
+					<img src="img/HTTP_persistent_connection.svg">
+				</section>
+
+				<section>
+					<h2>HTTP/1.0</h2>
+					<p>New header introduced:</p>
+					<p><code>Connection: Keep-Alive</code></p>
+				</section>
+
+				<section>
+					<h2>HTTP/1.1</h2>
+					<p>Persistent connections default</p>
+					<p class="fragment roll-in">HTTP pipelining</p>
+				</section>
+
+				<section>
+					<h2>HTTP pipelining</h2>
+					<img src="img/HTTP_pipelining2.svg">
+				</section>
+
+				<section>
+					<h2>HTTP pipelining</h2>
+					<p>Only enabled by default in Opera<p>
+					<p class="fragment roll-in">Still only FIFO, no true multiplexing<p>
+				</section>
+
+				<section>
+					<h2>More HTTP performance issues</h2>
+					<p>Headers are not compressed (~0.7kB)<p>
+					<p class="fragment roll-in">Headers are re-sent a lot<p>
+				</section>
+
+				<section>
+					<h2>How to reach better performance?</h2>
+					<p>Developers - Use several domains<p>
+					<p class="fragment roll-in">Browsers - 6 connections per domain<p>
+				</section>
+
+				<section>
+					<h2>SPDY</h2>
+					<p>Developed by Google</p>
+					<p class="fragment">Aimed to reduce page load time by 50%</p>
+					<p class="fragment">Minimize deployment complexity</p>
+					<p class="fragment">Improve web security</p>
+					<p class="fragment roll-in">Does not replace HTTP</p>
+				</section>
+
+				<section>
+					<h2>How does it work?</h2>
+					<p>Multiplexing - only one connection</p>
+					<p class="fragment">Compressed headers</p>
+					<p class="fragment">Prioritization</p>
+					<p class="fragment">Only new/changed headers</p>
+					<p class="fragment roll-in">Server push/hint</p>
+				</section>
+
+				<section>
+					<h2>Eliminate redundant headers</h2>
+					<p class="fragment"><code>User-Agent</code>, <code>Host</code>, and <code>Accept</code>-headers are static</p>
+					<p class="fragment roll-in">Other headers are rarely changed</p>
+				</section>
+
+				<section>
+					<h2>Server push</h2>
+					<p>Data is sent to client without being requested</p>
+					<p class="fragment roll-in"><code>X-Associated-Content</code> header</p>
+				</section>
+
+				<section>
+					<h2>Example index.html</h2>
+					<pre><code contenteditable>
+&lt;html&gt; <br/>  &lt;head&gt;<br/>    &lt;title&gt;My dog&lt;/title&gt;<br/>    &lt;link href='main.css' type='text/css' rel='stylesheet'&gt;<br/>  &lt;/head&gt;<br/>  &lt;body&gt;<br/>    &lt;img src='dog.jpg'&gt;<br/>    &lt;script src='main.js'&gt;&lt;/script&gt;<br/>  &lt;/body&gt;<br/>&lt;/html&gt;<br/>
+					</pre></code>
+				</section>
+
+				<section>
+					<h2>Without server push (HTTP/1.1)</h2>
+					<img src="img/traditional.svg">
+				</section>
+
+				<section>
+					<h2>Server push</h2>
+					<img src="img/server_push.svg">
+				</section>
+
+				<section>
+					<h2>Server push</h2>
+					<p>Vastly enhances page-load for first-time visitors</p>
+					<p class="fragment">Works best for non-cached resources</p>
+					<p class="fragment roll-in">Redundant data if resource is cached</p>
+				</section>
+
+				<section>
+					<section>
+						<h2>Server hint</h2>
+						<p>Server suggests specific resources</p>
+						<p class="fragment roll-in"><code> X-Subresources</code> header</p>
+					</section>
+
+					<section>
+						<h2>How web caching works</h2>
+						<ul>
+							<li class="fragment"><code>Cache-Control: max-age=120</code></li>
+							<li class="fragment">If fresh in cache - everything is fine</li>
+							<li class="fragment">If not - ask server if modified</li>
+							<li class="fragment">304 - not modified, no body</li>
+							<li class="fragment roll-in">200 - indeed modified, full response</li>
+						</ul>
+					</section>
+				</section>
+
+				<section>
+					<h2>Without server hint</h2>
+					<img src="img/traditional_cached.svg">
+				</section>
+
+				<section>
+					<h2>Server hint</h2>
+					<img src="img/server_hint.svg">
+				</section>
+
+				<section>
+					<h2>Server hint</h2>
+					<p>Better option for returning visitors</p>
+					<p class="fragment roll-in">Works best for cached resources</p>
+				</section>
+
+				<section>
+					<h2>Performance improvement</h2>
+					<p class="fragment">27-60% without SSL</p>
+					<p class="fragment">39-55% over SSL</p>
+					<p class="fragment">Very good for high packet loss rate</p>
+					<p class="fragment roll-in">Good for high RTT</p>
+				</section>
+
+				<section>
+					<h2>SPDY issues</h2>
+					<p class="fragment">SSL handshakes</p>
+					<p class="fragment roll-in">Worse perfomance when connection is lost</p>
+					<p class="fragment">Harder to implement</p>
+				</section>
+
+				<section>
+					<h2>Browsers with SPDY</h2>
+					<p class="fragment">Chrome</p>
+					<p class="fragment">Firefox</p>
+					<p class="fragment roll-in">Opera</p>
+				</section>
+
+				<section>
+					<h2>Servers with SPDY</h2>
+					<p class="fragment">Jetty</p>
+					<p class="fragment">Apache</p>
+					<p class="fragment">nginx</p>
+					<p class="fragment roll-in">Google?</p>
+				</section>
+
+				<section>
+					<h2>Websites using SPDY</h2>
+					<p class="fragment">gmail.com</p>
+					<p class="fragment">wordpress.com</p>
+					<p class="fragment">twitter.com</p>
+					<p class="fragment roll-in">facebook.com (will soon support)</p>
+				</section>
+
+				<section>
+					<h2>Want to know if you use it?</h2>
+					chrome://net-internals/#events&q=type:SPDY_SESSION%20is:active
+				</section>
+
+				<section>
+					<h2>HTTP/2.0</h2>
+					<p>Under development by IETF's HTTPbis working group</p>
+					<p class="fragment">Targeting 2014 for release<p>
+					<p class="fragment">Protocols that are considered:<p>
+					<p class="fragment">SPDY</p>
+					<p class="fragment roll-in">Microsoft's HTTP Speed+Mobility</p>
+				</section>
+
+				<section>
+					<h2>HTTP/2.0</h2>
+					<p>Initial draft Nov 2012 - straight copy of SPDY<p>
+					<p class="fragment roll-in">SPDY is just something to start with<p>
+				</section>
+
+				<section>
+					<h2>Q&A</h2>
+					<h4>johan.lundahl@jayway.com</h4>
+				</section>
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/showdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+					// { src: 'plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
